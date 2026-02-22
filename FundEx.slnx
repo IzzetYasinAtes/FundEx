@@ -1,0 +1,14 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/FundEx.Application/FundEx.Application.csproj" />
+    <Project Path="src/FundEx.Domain/FundEx.Domain.csproj" />
+    <Project Path="src/FundEx.Infrastructure/FundEx.Infrastructure.csproj" />
+    <Project Path="src/FundEx.Persistence/FundEx.Persistence.csproj" />
+    <Project Path="src/FundEx.WebApi/FundEx.WebApi.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/FundEx.Application.Tests/FundEx.Application.Tests.csproj" />
+    <Project Path="tests/FundEx.Domain.Tests/FundEx.Domain.Tests.csproj" />
+    <Project Path="tests/FundEx.Infrastructure.Tests/FundEx.Infrastructure.Tests.csproj" />
+  </Folder>
+</Solution>
