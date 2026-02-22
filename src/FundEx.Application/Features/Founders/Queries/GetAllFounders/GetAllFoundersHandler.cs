@@ -14,7 +14,9 @@ public class GetAllFoundersHandler : IRequestHandler<GetAllFoundersQuery, GetAll
         var query = _repository.Query();
 
         if (!string.IsNullOrEmpty(request.FundTypeCode))
+        {
             query = query.Where(f => f.FundTypeCode == request.FundTypeCode);
+        }
 
         var founders = query
             .OrderBy(f => f.Title)

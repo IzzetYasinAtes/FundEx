@@ -18,9 +18,13 @@ public class InMemoryCacheService : ICacheService
     {
         var options = new MemoryCacheEntryOptions();
         if (expiration.HasValue)
+        {
             options.SetAbsoluteExpiration(expiration.Value);
+        }
         else
+        {
             options.SetAbsoluteExpiration(TimeSpan.FromMinutes(5));
+        }
 
         _cache.Set(key, value, options);
         return Task.CompletedTask;

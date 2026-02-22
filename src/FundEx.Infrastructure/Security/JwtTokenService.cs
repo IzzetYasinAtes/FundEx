@@ -24,7 +24,9 @@ public class JwtTokenService
         };
 
         if (roles is not null)
+        {
             claims.AddRange(roles.Select(r => new Claim(ClaimTypes.Role, r)));
+        }
 
         var token = new JwtSecurityToken(
             issuer: _settings.Issuer,

@@ -24,9 +24,13 @@ public class FundExDbContext : DbContext
         foreach (var entry in ChangeTracker.Entries<FundEx.Domain.Common.Entity<Guid>>())
         {
             if (entry.State == EntityState.Modified)
+            {
                 entry.Entity.UpdatedDate = DateTime.UtcNow;
+            }
             else if (entry.State == EntityState.Added)
+            {
                 entry.Entity.CreatedDate = DateTime.UtcNow;
+            }
         }
         return base.SaveChangesAsync(cancellationToken);
     }

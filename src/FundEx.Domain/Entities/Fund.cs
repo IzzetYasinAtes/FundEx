@@ -38,6 +38,8 @@ public class Fund : Entity<Guid>
     public void CheckRule(IBusinessRule rule)
     {
         if (rule.IsBroken())
+        {
             throw new BusinessRuleValidationException(rule);
+        }
     }
 }

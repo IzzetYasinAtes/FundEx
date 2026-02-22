@@ -17,10 +17,14 @@ public class GetAllFundsHandler : IRequestHandler<GetAllFundsQuery, GetAllFundsR
         var query = _fundRepository.Query();
 
         if (!string.IsNullOrEmpty(request.FundTypeCode))
+        {
             query = query.Where(f => f.FundType.Code == request.FundTypeCode);
+        }
 
         if (!string.IsNullOrEmpty(request.SearchText))
+        {
             query = query.Where(f => f.Code.Contains(request.SearchText) || f.Title.Contains(request.SearchText));
+        }
 
         var totalCount = query.Count();
         var items = query

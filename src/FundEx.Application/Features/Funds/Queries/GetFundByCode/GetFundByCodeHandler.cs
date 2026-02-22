@@ -28,7 +28,9 @@ public class GetFundByCodeHandler : IRequestHandler<GetFundByCodeQuery, GetFundB
             .FirstOrDefault();
 
         if (fund is null)
+        {
             throw new NotFoundException(nameof(Fund), request.Code);
+        }
 
         return new GetFundByCodeResponse { Fund = fund };
     }

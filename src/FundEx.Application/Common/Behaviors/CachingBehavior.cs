@@ -18,7 +18,9 @@ public class CachingBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, 
     public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
     {
         if (request is not ICacheable cacheable)
+        {
             return await next(cancellationToken);
+        }
 
         var cached = await _cache.GetAsync<TResponse>(cacheable.CacheKey, cancellationToken);
         if (cached is not null)

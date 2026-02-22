@@ -14,9 +14,13 @@ public class DataSyncController : ControllerBase
     public async Task<IActionResult> TriggerSync([FromQuery] DateTime? startDate, [FromQuery] DateTime? endDate, CancellationToken ct)
     {
         if (startDate.HasValue && endDate.HasValue)
+        {
             await _orchestrator.SyncDailyDataAsync(startDate.Value, endDate.Value, ct);
+        }
         else
+        {
             await _orchestrator.RunDailySyncAsync(ct);
+        }
 
         return Ok(new { Message = "Sync completed", IsSuccess = true });
     }
