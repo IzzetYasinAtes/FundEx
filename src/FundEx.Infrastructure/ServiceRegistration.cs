@@ -2,6 +2,7 @@ namespace FundEx.Infrastructure;
 using System.Text;
 using FundEx.Application.Common.Interfaces;
 using FundEx.Infrastructure.BackgroundServices;
+using FundEx.Infrastructure.DataSync;
 using FundEx.Infrastructure.Caching;
 using FundEx.Infrastructure.ExternalServices.Tefas;
 using FundEx.Infrastructure.Security;
@@ -25,12 +26,15 @@ public static class ServiceRegistration
                 ?? "https://tefas.takasbank.com.tr/api/funds/";
             client.BaseAddress = new Uri(baseUrl);
             client.DefaultRequestHeaders.Add("Accept", "application/json");
+            client.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36");
         })
         .AddPolicyHandler(GetRetryPolicy());
 
         services.AddMemoryCache();
         services.AddSingleton<ICacheService, InMemoryCacheService>();
         services.AddSingleton<JwtTokenService>();
+        services.AddScoped<IMetadataSyncService, MetadataSyncService>();
+        services.AddScoped<IDailyDataSyncService, DailyDataSyncService>();
         services.AddScoped<DataSyncOrchestrator>();
         services.AddHostedService<DataSyncBackgroundService>();
 

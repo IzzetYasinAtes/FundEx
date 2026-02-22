@@ -1,5 +1,7 @@
 namespace FundEx.Infrastructure.ExternalServices.Tefas;
 using System.Net.Http.Json;
+using System.Text;
+using System.Text.Json;
 using FundEx.Application.Common.Interfaces;
 using FundEx.Application.Common.Models.Tefas;
 using Microsoft.Extensions.Logging;
@@ -10,6 +12,12 @@ public class TefasApiService : ITefasApiService
     private readonly HttpClient _httpClient;
     private readonly TefasApiSettings _settings;
     private readonly ILogger<TefasApiService> _logger;
+
+    private static readonly JsonSerializerOptions JsonOptions = new()
+    {
+        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+        PropertyNameCaseInsensitive = true
+    };
 
     public TefasApiService(HttpClient httpClient, IOptions<TefasApiSettings> settings, ILogger<TefasApiService> logger)
     {
@@ -64,16 +72,32 @@ public class TefasApiService : ITefasApiService
     {
         try
         {
-            _logger.LogDebug("TEFAS API call: {Endpoint}", endpoint);
-            var response = await _httpClient.PostAsJsonAsync(endpoint, body, ct);
-            response.EnsureSuccessStatusCode();
+            var jsonBody = JsonSerializer.Serialize(body, JsonOptions);
+            _logger.LogDebug("TEFAS API call: {Endpoint} Body: {Body}", endpoint, jsonBody);
+
+            var content = new StringContent(jsonBody, Encoding.UTF8, "application/json");
+            var response = await _httpClient.PostAsync(endpoint, content, ct);
+
+            var responseBody = await response.Content.ReadAsStringAsync(ct);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                _logger.LogWarning("TEFAS API {Endpoint} returned {StatusCode}: {Response}",
+                    endpoint, (int)response.StatusCode, responseBody);
+                return default;
+            }
+
             await Task.Delay(_settings.RequestDelayMs, ct);
-            return await response.Content.ReadFromJsonAsync<T>(ct);
+            return JsonSerializer.Deserialize<T>(responseBody, JsonOptions);
+        }
+        catch (TaskCanceledException)
+        {
+            throw;
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "TEFAS API error: {Endpoint}", endpoint);
-            throw;
+            return default;
         }
     }
 }
